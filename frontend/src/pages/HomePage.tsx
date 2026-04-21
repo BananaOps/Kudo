@@ -46,7 +46,7 @@ export function HomePage() {
               <div style={{ height: '100%', width: `${(quotaRemaining / quotaTotal) * 100}%`, background: 'var(--spark)', borderRadius: 3 }} />
             </div>
           </div>
-          <button onClick={() => setShowModal(true)} style={{ background: 'var(--ink)', color: 'var(--spark)', border: '1px solid var(--ink)', padding: '9px 14px', borderRadius: 10, fontSize: 13, fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-sans)' }}>
+          <button onClick={() => setShowModal(true)} style={{ background: 'var(--coral)', color: '#fff', border: '1px solid var(--coral-dark)', padding: '9px 14px', borderRadius: 'var(--radius)', fontSize: 13, fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-sans)' }}>
             <i className="fa-solid fa-paper-plane" /> Send a Spark
           </button>
         </div>
@@ -63,36 +63,36 @@ export function HomePage() {
               : 'Loading your spark activity...'}
           </p>
           <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={() => setShowModal(true)} style={{ background: 'var(--spark)', color: 'var(--ink)', border: '1px solid var(--spark-deep)', padding: '9px 14px', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-sans)' }}>
+            <button onClick={() => setShowModal(true)} style={{ background: 'var(--coral)', color: '#fff', border: '1px solid var(--coral-dark)', padding: '9px 14px', borderRadius: 'var(--radius)', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-sans)' }}>
               <i className="fa-solid fa-bolt" /> Send a Spark
             </button>
-            <button style={{ background: 'var(--surface)', border: '1px solid var(--line)', padding: '9px 14px', borderRadius: 10, fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font-sans)', color: 'var(--ink)' }}>
+            <button style={{ background: 'var(--surface)', border: '1px solid var(--line)', padding: '9px 14px', borderRadius: 'var(--radius)', fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font-sans)', color: 'var(--ink)' }}>
               See this week's top givers
             </button>
           </div>
         </div>
 
-        <div style={{ background: 'var(--ink)', color: '#fff', borderRadius: 'var(--radius-lg)', padding: '22px 24px', minHeight: 190, position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 85% 15%, rgba(245,184,0,0.25) 0%, transparent 55%), radial-gradient(circle at 15% 85%, rgba(245,184,0,0.1) 0%, transparent 40%)', pointerEvents: 'none' }} />
+        <div style={{ background: 'var(--coral)', color: '#fff', borderRadius: 'var(--radius-lg)', padding: '22px 24px', minHeight: 190, position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 85% 15%, rgba(255,255,255,0.2) 0%, transparent 55%)', pointerEvents: 'none' }} />
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.08em', color: 'var(--spark-glow)', margin: '0 0 12px', fontFamily: 'var(--font-mono)' }}>YOUR DAILY QUOTA</h3>
+            <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.08em', color: 'rgba(255,255,255,0.8)', margin: '0 0 12px', fontFamily: 'var(--font-mono)' }}>YOUR DAILY QUOTA</h3>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
               <span style={{ fontFamily: 'var(--font-sans)', fontSize: 72, fontWeight: 800, color: '#fff', lineHeight: 1, letterSpacing: '-2px' }}>{quotaRemaining}</span>
-              <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15 }}>sparks left to send today</span>
+              <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15 }}>sparks left to send today</span>
             </div>
             <div style={{ display: 'flex', gap: 6, marginTop: 18 }}>
               {Array.from({ length: quotaTotal }).map((_, i) => (
                 <div key={i} style={{
-                  width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10,
-                  background: i < quotaRemaining ? 'var(--spark)' : 'rgba(255,255,255,0.06)',
-                  border: `1px solid ${i < quotaRemaining ? 'var(--spark-deep)' : 'rgba(255,255,255,0.1)'}`,
-                  color: i < quotaRemaining ? 'var(--ink)' : 'rgba(255,255,255,0.2)',
+                  width: 22, height: 22, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10,
+                  background: i < quotaRemaining ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.15)',
+                  border: `1px solid ${i < quotaRemaining ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.1)'}`,
+                  color: i < quotaRemaining ? 'var(--coral)' : 'rgba(255,255,255,0.3)',
                 }}>⚡</div>
               ))}
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
-              <span style={{ color: 'rgba(255,255,255,0.55)', fontSize: 12 }}>Resets tomorrow</span>
-              <button onClick={() => setShowModal(true)} style={{ background: 'var(--spark)', color: 'var(--ink)', border: 'none', borderRadius: 10, padding: '6px 12px', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'var(--font-sans)' }}>
+              <span style={{ color: 'rgba(255,255,255,0.65)', fontSize: 12 }}>Resets tomorrow</span>
+              <button onClick={() => setShowModal(true)} style={{ background: '#fff', color: 'var(--coral)', border: 'none', borderRadius: 'var(--radius)', padding: '6px 12px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-sans)' }}>
                 Send now →
               </button>
             </div>
@@ -107,10 +107,10 @@ export function HomePage() {
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 32 }}>
-        <StatCard icon="fa-solid fa-bolt" label="Received · This week" value={stats?.receivedThisWeek ?? 0} trendText="+6 vs last week" trendType="up" />
-        <StatCard icon="fa-solid fa-bolt" label="Received · This month" value={stats?.receivedThisMonth ?? 0} trendText="+18% vs last month" trendType="up" />
-        <StatCard icon="fa-solid fa-paper-plane" label="Given · This month" value={stats?.givenThisMonth ?? 0} trendText="Across your teammates" />
-        <StatCard icon="fa-solid fa-fire" label="Giving streak" value={stats?.streak ?? 0} trendText="Personal best · Keep it going!" highlight />
+        <StatCard icon="fa-solid fa-bolt" label="Received · This week" value={stats?.receivedThisWeek ?? 0} trendText="+6 vs last week" trendType="up" color="coral" />
+        <StatCard icon="fa-solid fa-bolt" label="Received · This month" value={stats?.receivedThisMonth ?? 0} trendText="+18% vs last month" trendType="up" color="teal" />
+        <StatCard icon="fa-solid fa-paper-plane" label="Given · This month" value={stats?.givenThisMonth ?? 0} trendText="Across your teammates" color="yellow" />
+        <StatCard icon="fa-solid fa-fire" label="Giving streak" value={stats?.streak ?? 0} trendText="Personal best · Keep it going!" highlight color="pink" />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 24 }}>
