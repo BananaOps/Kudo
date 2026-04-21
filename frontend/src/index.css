@@ -1,0 +1,58 @@
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+@import "tailwindcss";
+
+:root {
+  /* — Surfaces — */
+  --bg: #F7F7FA;
+  --surface: #FFFFFF;
+  --surface-2: #EDEDF4;
+  --line: #E1E1EC;
+  --line-strong: #C9C9DC;
+
+  /* — Ink (deep navy-charcoal, pas noir brutal) — */
+  --ink: #1F1F35;
+  --ink-2: #3E3E5E;
+  --muted: #7878A0;
+  --muted-2: #ABABC8;
+
+  /* — Spark — */
+  --spark: #F5B800;
+  --spark-deep: #B8890A;
+  --spark-soft: #FFF5CC;
+  --spark-glow: #FFE566;
+
+  /* — Sémantiques — */
+  --good: #059669;
+  --danger: #DC2626;
+
+  /* — Shape — */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 18px;
+
+  /* — Shadows (teintées navy) — */
+  --shadow-sm: 0 1px 0 rgba(31,31,53,0.04), 0 1px 3px rgba(31,31,53,0.05);
+  --shadow-md: 0 1px 0 rgba(31,31,53,0.03), 0 8px 24px -8px rgba(31,31,53,0.10);
+  --shadow-lg: 0 2px 0 rgba(31,31,53,0.02), 0 24px 48px -12px rgba(31,31,53,0.16);
+
+  /* — Typography — */
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+* { box-sizing: border-box; }
+
+.serif { font-family: var(--font-serif); }
+.mono { font-family: var(--font-mono); }

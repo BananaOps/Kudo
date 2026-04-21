@@ -1,0 +1,151 @@
+# https://taskfile.dev
+version: "3"
+
+# Load .env automatically for all tasks (falls back to .env.example if .env absent).
+dotenv: [".env", ".env.example"]
+
+vars:
+  BACKEND_BIN: backend/bin/api
+
+tasks:
+  # ── Default ──────────────────────────────────────────────────────────────────
+  default:
+    desc: List all available tasks
+    silent: true
+    cmds:
+      - task --list
+
+  # ── Backend ──────────────────────────────────────────────────────────────────
+  backend:run:
+    desc: "Run the backend API server (hot-reload not included)"
+    dir: backend
+    cmds:
+      - go run ./cmd/api
+    env:
+      PORT: "8080"
+
+  backend:build:
+    desc: "Build the backend binary → backend/bin/api"
+    dir: backend
+    cmds:
+      - mkdir -p bin
+      - CGO_ENABLED=0 go build -ldflags="-s -w" -o bin/api ./cmd/api
+
+  backend:vet:
+    desc: Run go vet on the backend
+    dir: backend
+    cmds:
+      - go vet ./...
+
+  backend:test:
+    desc: Run backend unit tests
+    dir: backend
+    cmds:
+      - go test -race -count=1 ./...
+
+  backend:test:cover:
+    desc: Run backend tests with HTML coverage report
+    dir: backend
+    cmds:
+      - go test -race -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out -o coverage.html
+      - echo "Coverage report → backend/coverage.html"
+
+  # ── Frontend ─────────────────────────────────────────────────────────────────
+  frontend:install:
+    desc: Install frontend dependencies (npm ci)
+    dir: frontend
+    cmds:
+      - npm ci
+    sources:
+      - frontend/package-lock.json
+    generates:
+      - frontend/node_modules/.package-lock.json
+
+  frontend:dev:
+    desc: Start the frontend Vite dev server on :5173
+    dir: frontend
+    deps: [frontend:install]
+    cmds:
+      - npm run dev
+
+  frontend:build:
+    desc: Build the frontend for production → frontend/dist/
+    dir: frontend
+    deps: [frontend:install]
+    cmds:
+      - npm run build
+
+  frontend:test:
+    desc: Run frontend unit tests (Vitest)
+    dir: frontend
+    deps: [frontend:install]
+    cmds:
+      - npm test
+
+  frontend:test:ui:
+    desc: Open Vitest UI in the browser
+    dir: frontend
+    deps: [frontend:install]
+    cmds:
+      - npx vitest --ui
+
+  # ── Dev (front + back en parallèle) ─────────────────────────────────────────
+  dev:
+    desc: "Start backend (:8080) and frontend (:5173) concurrently"
+    deps: [frontend:install]
+    cmds:
+      - bash -c '(cd backend && go run ./cmd/api) & (cd frontend && npm run dev) & wait'
+
+  # ── Combined ──────────────────────────────────────────────────────────────────
+  test:
+    desc: Run all tests (backend + frontend)
+    cmds:
+      - task: backend:test
+      - task: frontend:test
+
+  build:
+    desc: Build everything (backend binary + frontend dist)
+    cmds:
+      - task: backend:build
+      - task: frontend:build
+
+  lint:
+    desc: Run all linters (go vet + tsc)
+    cmds:
+      - task: backend:vet
+      - cmd: cd frontend && npx tsc --noEmit
+        ignore_error: false
+
+  # ── Docker ────────────────────────────────────────────────────────────────────
+  docker:build:
+    desc: Build the single Docker image (frontend + backend)
+    cmds:
+      - docker build -t kudo:local .
+
+  docker:up:
+    desc: Build and start all services with Docker Compose
+    cmds:
+      - docker compose up --build
+
+  docker:up:detach:
+    desc: Start all services in the background
+    cmds:
+      - docker compose up --build -d
+
+  docker:down:
+    desc: Stop and remove containers
+    cmds:
+      - docker compose down
+
+  docker:logs:
+    desc: Follow logs for all services
+    cmds:
+      - docker compose logs -f
+
+  # ── Misc ─────────────────────────────────────────────────────────────────────
+  clean:
+    desc: Remove build artefacts
+    cmds:
+      - rm -rf backend/bin backend/coverage.out backend/coverage.html
+      - rm -rf frontend/dist

@@ -1,0 +1,19 @@
+# Node modules & build artefacts
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+
+# Go build artefacts
+backend/bin/
+backend/coverage.out
+backend/coverage.html
+
+# Git history (not needed in the build context)
+.git/
+
+# Editor / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

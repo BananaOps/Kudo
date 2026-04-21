@@ -1,0 +1,11 @@
+# Build artefacts
+bin/
+coverage.out
+coverage.html
+
+# Test cache
+*.test
+
+# Editor artefacts
+.vscode/
+.idea/
