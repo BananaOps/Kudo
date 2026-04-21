@@ -4,57 +4,46 @@ interface ZapMascotProps {
 }
 
 export function ZapMascot({ size = 32, className }: ZapMascotProps) {
-  // Viewbox 100x130, on scale via width/height
-  const scale = size / 32;
-  const w = 100 * scale;
-  const h = 130 * scale;
-
   return (
     <svg
-      width={w}
-      height={h}
-      viewBox="0 0 100 130"
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      {/* Corps de l'éclair */}
+      {/* Lueur douce derrière le bolt */}
+      <ellipse cx="50" cy="54" rx="28" ry="22" fill="#FFB3A7" opacity="0.35" />
+
+      {/* Corps du bolt — contour épais comme dans l'image */}
       <path
-        d="M62 4L20 68H46L34 126L82 52H54L62 4Z"
+        d="M67 8 L24 8 L13 56 L40 56 L29 94 L83 44 L55 44 Z"
         fill="#FF7B6B"
-        stroke="#D95E50"
-        strokeWidth="2.5"
+        stroke="#1A1A2E"
+        strokeWidth="5"
         strokeLinejoin="round"
-      />
-      {/* Reflet */}
-      <path
-        d="M56 10L28 62H50L42 100L74 56H52L56 10Z"
-        fill="#FF9E94"
-        opacity="0.35"
-      />
-      {/* Œil gauche — ouvert */}
-      <circle cx="42" cy="58" r="7" fill="white" />
-      <circle cx="44" cy="57" r="3.5" fill="#1F1F2E" />
-      <circle cx="45.5" cy="55.5" r="1.2" fill="white" />
-      {/* Œil droit — clin d'œil */}
-      <path
-        d="M53 52 Q60 46 67 52"
-        stroke="#1F1F2E"
-        strokeWidth="2.8"
         strokeLinecap="round"
-        fill="none"
       />
-      {/* Grand sourire */}
+
+      {/* Œil gauche */}
+      <circle cx="38" cy="36" r="10" fill="white" stroke="#1A1A2E" strokeWidth="2.5" />
+      <circle cx="39.5" cy="35" r="5.2" fill="#1A1A2E" />
+      <circle cx="41.2" cy="33.2" r="1.8" fill="white" />
+
+      {/* Œil droit */}
+      <circle cx="61" cy="34" r="10" fill="white" stroke="#1A1A2E" strokeWidth="2.5" />
+      <circle cx="62.5" cy="33" r="5.2" fill="#1A1A2E" />
+      <circle cx="64.2" cy="31.2" r="1.8" fill="white" />
+
+      {/* Sourire */}
       <path
-        d="M37 70 Q51 84 67 70"
-        stroke="#1F1F2E"
+        d="M42 50 Q50 57 59 50"
+        stroke="#1A1A2E"
         strokeWidth="3"
         strokeLinecap="round"
         fill="none"
       />
-      {/* Joues rosées */}
-      <circle cx="34" cy="70" r="5.5" fill="#FFB3A7" opacity="0.75" />
-      <circle cx="69" cy="64" r="5.5" fill="#FFB3A7" opacity="0.75" />
     </svg>
   );
 }

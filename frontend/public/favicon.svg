@@ -1,6 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <!-- Background rounded square -->
-  <rect width="32" height="32" rx="8" fill="#1F1F35"/>
-  <!-- Lightning bolt — spark yellow, centered, clean geometric shape -->
-  <path d="M18.5 4L9 18h7.5L13.5 28L23 14h-7.5L18.5 4Z" fill="#F5B800"/>
+  <!-- Fond blanc arrondi style app icon -->
+  <rect width="32" height="32" rx="7" fill="white"/>
+
+  <!-- Lueur douce -->
+  <ellipse cx="16" cy="18" rx="8" ry="6.5" fill="#FFB3A7" opacity="0.4"/>
+
+  <!-- Corps du bolt -->
+  <path d="M21 3 L8.5 3 L5 17.5 L12.5 17.5 L9.5 29 L26 14 L18 14 Z"
+    fill="#FF7B6B"
+    stroke="#1A1A2E"
+    stroke-width="1.6"
+    stroke-linejoin="round"
+    stroke-linecap="round"/>
+
+  <!-- Œil gauche -->
+  <circle cx="12" cy="11.5" r="3" fill="white" stroke="#1A1A2E" stroke-width="0.8"/>
+  <circle cx="12.5" cy="11.1" r="1.5" fill="#1A1A2E"/>
+  <circle cx="13.1" cy="10.4" r="0.55" fill="white"/>
+
+  <!-- Œil droit -->
+  <circle cx="19" cy="10.8" r="3" fill="white" stroke="#1A1A2E" stroke-width="0.8"/>
+  <circle cx="19.5" cy="10.4" r="1.5" fill="#1A1A2E"/>
+  <circle cx="20.1" cy="9.7" r="0.55" fill="white"/>
+
+  <!-- Sourire -->
+  <path d="M13.5 16 Q16 18 18.5 16"
+    stroke="#1A1A2E"
+    stroke-width="0.95"
+    stroke-linecap="round"
+    fill="none"/>
 </svg>
