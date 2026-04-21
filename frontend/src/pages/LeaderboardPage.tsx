@@ -9,13 +9,13 @@ type Tab = 'received' | 'given';
 
 const POD_STYLES: Record<number, { bg: string; border: string; rib: string; halo?: string }> = {
   1: {
-    bg: 'linear-gradient(180deg, var(--spark-soft) 0%, #fff 100%)',
-    border: '#F0DE9A',
-    rib: 'var(--spark)',
-    halo: 'radial-gradient(circle, rgba(245,184,0,0.25) 0%, transparent 65%)',
+    bg: 'var(--yellow-light)',
+    border: 'var(--yellow-border)',
+    rib: 'var(--yellow)',
+    halo: 'radial-gradient(circle, rgba(245,184,0,0.2) 0%, transparent 65%)',
   },
-  2: { bg: 'var(--surface)', border: 'var(--line)', rib: 'var(--surface-2)' },
-  3: { bg: 'var(--surface)', border: 'var(--line)', rib: 'var(--surface-2)' },
+  2: { bg: 'var(--sky-light)', border: 'var(--sky-border)', rib: 'var(--sky)' },
+  3: { bg: 'var(--teal-light)', border: 'var(--teal-border)', rib: 'var(--teal)' },
 };
 
 const POD_ORDER = [2, 1, 3];
@@ -72,7 +72,7 @@ function TableRow({ entry, index }: { entry: LeaderboardEntry; index: number }) 
     >
       <span style={{
         fontFamily: 'var(--font-mono)', fontSize: 13,
-        color: entry.rank <= 3 ? 'var(--spark-deep)' : 'var(--muted)',
+        color: entry.rank <= 3 ? 'var(--coral)' : 'var(--muted)',
         fontWeight: entry.rank <= 3 ? 700 : 400,
       }}>
         {String(entry.rank).padStart(2, '0')}
@@ -125,10 +125,10 @@ export function LeaderboardPage({ entries: entriesProp }: LeaderboardPageProps =
     .filter(Boolean) as LeaderboardEntry[];
 
   const segStyle = (active: boolean): React.CSSProperties => ({
-    padding: '5px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+    padding: '5px 14px', borderRadius: 'var(--radius-sm)', border: 'none', cursor: 'pointer',
     fontSize: 13, fontFamily: 'var(--font-sans)', fontWeight: active ? 600 : 400,
-    background: active ? 'var(--ink)' : 'transparent',
-    color: active ? 'var(--spark)' : 'var(--muted)',
+    background: active ? 'var(--coral)' : 'transparent',
+    color: active ? '#fff' : 'var(--muted)',
     transition: 'all 0.15s',
   });
 
