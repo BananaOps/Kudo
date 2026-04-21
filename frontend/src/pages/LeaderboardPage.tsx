@@ -7,54 +7,71 @@ import { useLeaderboard } from '../hooks/useLeaderboard';
 type Period = 'week' | 'month' | 'all';
 type Tab = 'received' | 'given';
 
-const POD_STYLES: Record<number, { bg: string; border: string; rib: string; halo?: string }> = {
+const POD_STYLES: Record<number, { bg: string; border: string; rib: string; text: string; halo?: string }> = {
   1: {
     bg: 'var(--yellow-light)',
     border: 'var(--yellow-border)',
     rib: 'var(--yellow)',
+    text: '#C89300',
     halo: 'radial-gradient(circle, rgba(245,184,0,0.2) 0%, transparent 65%)',
   },
-  2: { bg: 'var(--sky-light)', border: 'var(--sky-border)', rib: 'var(--sky)' },
-  3: { bg: 'var(--teal-light)', border: 'var(--teal-border)', rib: 'var(--teal)' },
+  2: { bg: 'var(--sky-light)',  border: 'var(--sky-border)',  rib: 'var(--sky)',  text: 'var(--sky)' },
+  3: { bg: 'var(--teal-light)', border: 'var(--teal-border)', rib: 'var(--teal)', text: 'var(--teal)' },
 };
 
 const POD_ORDER = [2, 1, 3];
 
+const MEDALS: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
+const TITLES: Record<number, string> = { 1: 'Top Spark', 2: 'Runner-up', 3: 'Rising Star' };
+
 function PodiumCard({ entry, index }: { entry: LeaderboardEntry; index: number }) {
   const pod = POD_STYLES[entry.rank] ?? POD_STYLES[3];
   const isGold = entry.rank === 1;
-  const labels: Record<number, string> = { 1: '01 · Top spark', 2: '02 · Runner-up', 3: '03 · Rising star' };
+
   return (
     <div style={{
       background: pod.bg, border: `1px solid ${pod.border}`,
-      borderRadius: 'var(--radius-lg)', padding: `${isGold ? 36 : 28}px 22px 28px`,
+      borderRadius: 'var(--radius-lg)',
       textAlign: 'center', position: 'relative', alignSelf: 'flex-end',
-      boxShadow: 'var(--shadow-md)',
+      boxShadow: 'var(--shadow-md)', overflow: 'hidden',
     }}>
-      <div style={{
-        position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)',
-        background: pod.rib, border: `1px solid ${isGold ? 'var(--spark-deep)' : 'var(--line)'}`,
-        borderRadius: 999, padding: '3px 10px', fontSize: 11, fontWeight: 600,
-        color: isGold ? 'var(--ink)' : 'var(--muted)', fontFamily: 'var(--font-mono)',
-        whiteSpace: 'nowrap',
-      }}>
-        {labels[entry.rank]}
-      </div>
+      {/* Halo gold */}
       {isGold && pod.halo && (
-        <div style={{ position: 'absolute', inset: 0, borderRadius: 'var(--radius-lg)', background: pod.halo, pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', inset: 0, background: pod.halo, pointerEvents: 'none' }} />
       )}
-      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
-        <Avatar name={entry.name} index={index} size={isGold ? 84 : 68} />
+
+      {/* Title header — médaille + titre intégrés */}
+      <div style={{
+        position: 'relative', zIndex: 1,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+        padding: `${isGold ? 14 : 11}px 16px`,
+        borderBottom: `1px solid ${pod.border}`,
+        background: `color-mix(in srgb, ${pod.bg} 60%, white 40%)`,
+      }}>
+        <span style={{ fontSize: isGold ? 24 : 20, lineHeight: 1 }} aria-label={`Rank ${entry.rank}`}>{MEDALS[entry.rank]}</span>
         <span style={{
-          position: 'absolute', top: -6, right: isGold ? 'calc(50% - 54px)' : 'calc(50% - 46px)',
-          fontSize: 18,
-        }} aria-label={`Rank ${entry.rank}`}>{entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : '🥉'}</span>
+          fontSize: isGold ? 14 : 12,
+          fontWeight: 800,
+          fontFamily: 'var(--font-sans)',
+          textTransform: 'uppercase',
+          letterSpacing: '.06em',
+          color: pod.text,
+        }}>
+          {TITLES[entry.rank]}
+        </span>
       </div>
-      <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--ink)', marginBottom: 2 }}>{entry.name}</div>
-      <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 10 }}>Engineer</div>
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 6 }}>
-        <span style={{ fontFamily: 'var(--font-sans)', fontSize: isGold ? 56 : 44, fontWeight: 800, lineHeight: 1, letterSpacing: '-1px' }}>{entry.kudosCount}</span>
-        <span style={{ fontSize: isGold ? 18 : 15, color: 'var(--spark-deep)' }}>⚡</span>
+
+      {/* Body */}
+      <div style={{ position: 'relative', zIndex: 1, padding: `${isGold ? 24 : 18}px 22px 24px` }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+          <Avatar name={entry.name} index={index} size={isGold ? 84 : 68} />
+        </div>
+        <div style={{ fontWeight: 700, fontSize: isGold ? 16 : 14, color: 'var(--ink)', marginBottom: 2 }}>{entry.name}</div>
+        <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 12 }}>Engineer</div>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 6 }}>
+          <span style={{ fontFamily: 'var(--font-sans)', fontSize: isGold ? 52 : 40, fontWeight: 800, lineHeight: 1, letterSpacing: '-1px', color: 'var(--ink)' }}>{entry.kudosCount}</span>
+          <span style={{ fontSize: isGold ? 18 : 15, color: pod.text }}>⚡</span>
+        </div>
       </div>
     </div>
   );
@@ -151,7 +168,7 @@ export function LeaderboardPage({ entries: entriesProp }: LeaderboardPageProps =
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontFamily: 'var(--font-sans)', fontSize: 42, fontWeight: 800, lineHeight: 1.06, margin: '0 0 8px', color: 'var(--ink)', letterSpacing: '-1px' }}>
           Les personnes les plus{' '}
-          <em style={{ fontStyle: 'italic', color: 'var(--spark-deep)' }}>{tabInfo.adjective}</em>{' '}
+          <em style={{ fontStyle: 'italic', color: 'var(--coral)' }}>{tabInfo.adjective}</em>{' '}
           {PERIOD_TITLE[period]}
         </h1>
         <p style={{ color: 'var(--muted)', fontSize: 14, margin: 0 }}>
