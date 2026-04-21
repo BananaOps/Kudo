@@ -197,22 +197,36 @@ export function MyKudosPage() {
             <div style={{ padding: '16px 22px', borderBottom: '1px solid var(--line)' }}>
               <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--ink)' }}>Words that keep showing up</div>
             </div>
-            <div style={{ padding: '16px 22px', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <div style={{ padding: '16px 22px', display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
               {wordCloud.length === 0 && (
                 <span style={{ color: 'var(--muted)', fontSize: 13 }}>No keywords yet.</span>
               )}
-              {wordCloud.map((w, idx) => (
-                <span key={w.word} style={{
-                  fontSize: Math.max(12, Math.min(20, 12 + w.count * 2)),
-                  padding: '4px 10px', borderRadius: 'var(--radius-sm)',
-                  background: idx < 3 ? 'var(--yellow-light)' : 'var(--surface-2)',
-                  border: `1px solid ${idx < 3 ? 'var(--yellow-border)' : 'var(--line)'}`,
-                  color: idx < 3 ? 'var(--spark-deep)' : 'var(--ink-2)',
-                  fontWeight: idx < 3 ? 600 : 400,
-                }}>
-                  {w.word}
-                </span>
-              ))}
+              {wordCloud.map((w, idx) => {
+                const palette = [
+                  { bg: 'var(--coral-light)',  border: 'var(--coral-border)',  text: 'var(--coral-dark)' },
+                  { bg: 'var(--teal-light)',   border: 'var(--teal-border)',   text: 'var(--teal)' },
+                  { bg: 'var(--yellow-light)', border: 'var(--yellow-border)', text: '#C89300' },
+                  { bg: 'var(--pink-light)',   border: 'var(--pink-border)',   text: 'var(--pink)' },
+                  { bg: 'var(--sky-light)',    border: 'var(--sky-border)',    text: 'var(--sky)' },
+                ];
+                const c = idx < 5 ? palette[idx] : { bg: 'var(--surface-2)', border: 'var(--line)', text: 'var(--ink-2)' };
+                const isTop = idx < 5;
+                return (
+                  <span key={w.word} style={{
+                    fontSize: Math.max(11, Math.min(20, 11 + w.count * 2)),
+                    padding: isTop ? '5px 12px' : '4px 10px',
+                    borderRadius: 'var(--radius-sm)',
+                    background: c.bg,
+                    border: `1px solid ${c.border}`,
+                    color: c.text,
+                    fontWeight: isTop ? 700 : 400,
+                    fontFamily: 'var(--font-sans)',
+                    lineHeight: 1,
+                  }}>
+                    {w.word}
+                  </span>
+                );
+              })}
             </div>
           </div>
         </div>
