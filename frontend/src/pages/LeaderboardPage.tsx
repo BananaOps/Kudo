@@ -2,7 +2,6 @@ import { useState } from 'react';
 import type { LeaderboardEntry } from "../types/kudos";
 import { Avatar } from '../components/Avatar';
 import { SparklineTrend } from '../components/SparklineTrend';
-import { Heatmap } from '../components/Heatmap';
 import { useLeaderboard } from '../hooks/useLeaderboard';
 
 type Period = 'week' | 'month' | 'all';
@@ -224,24 +223,6 @@ export function LeaderboardPage({ entries: entriesProp }: LeaderboardPageProps =
             </div>
           )}
 
-          {/* Team activity heatmap */}
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', marginBottom: 32 }}>
-            <div style={{ padding: '16px 22px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--ink)' }}>Team sparks this year</div>
-                <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 2 }}>Workspace activity across all teammates</div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--coral-light)', border: '1px solid var(--coral-border)', borderRadius: 'var(--radius-sm)', padding: '5px 12px' }}>
-                <span style={{ fontSize: 13 }}>⚡</span>
-                <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--coral-dark)', fontFamily: 'var(--font-sans)' }}>
-                  {entries.reduce((sum, e) => sum + e.kudosCount, 0)} sparks
-                </span>
-              </div>
-            </div>
-            <div style={{ padding: '20px 22px' }}>
-              <Heatmap />
-            </div>
-          </div>
 
           {rest.length > 0 && (
             <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', marginBottom: 32 }}>
