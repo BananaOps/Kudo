@@ -21,18 +21,20 @@ export function KudoItem({ kudo, variant = 'received', index = 0 }: KudoItemProp
   const name = variant === 'received' ? kudo.fromUserName : kudo.toUserName;
   const role = variant === 'received' ? 'Product' : 'Engineering';
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '40px 1fr auto', gap: 14, padding: '16px 22px', borderBottom: '1px solid var(--line)' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '40px 1fr auto', gap: 14, padding: '14px 20px', borderBottom: '1px solid var(--line)' }}>
       <Avatar name={name} index={index} size={40} />
       <div>
         <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--ink)' }}>{name}</div>
         <div style={{ color: 'var(--muted)', fontSize: 12, marginBottom: 4 }}>{role} · {formatRelativeTime(kudo.createdAt)}</div>
         <div style={{ color: 'var(--ink-2)', fontSize: 14, lineHeight: 1.5 }}>{kudo.message}</div>
         {kudo.channel && (
-          <div style={{ marginTop: 6, display: 'inline-block', fontFamily: 'var(--font-mono)', fontSize: 11, background: 'var(--surface-2)', borderRadius: 5, padding: '2px 6px', color: 'var(--muted)' }}>#{kudo.channel}</div>
+          <div style={{ marginTop: 6, display: 'inline-block', fontFamily: 'var(--font-mono)', fontSize: 11, background: 'var(--teal-light)', borderRadius: 'var(--radius-sm)', padding: '2px 7px', color: 'var(--teal)', fontWeight: 600, border: '1px solid var(--teal-border)' }}>
+            #{kudo.channel}
+          </div>
         )}
       </div>
       <div style={{ alignSelf: 'start' }}>
-        <span style={{ background: 'var(--spark-soft)', border: '1px solid #F0DE9A', color: 'var(--spark-deep)', fontWeight: 600, fontSize: 13, padding: '5px 10px', borderRadius: 999 }}>
+        <span style={{ background: 'var(--yellow-light)', border: '1px solid var(--yellow-border)', color: 'var(--spark-deep)', fontWeight: 600, fontSize: 13, padding: '4px 9px', borderRadius: 'var(--radius-sm)' }}>
           ⚡ {kudo.kudosCount}
         </span>
       </div>
