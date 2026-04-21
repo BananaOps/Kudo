@@ -30,7 +30,7 @@
 
   /* — Alias rétro-compat (utilisés dans les composants existants) — */
   --spark:         var(--yellow);
-  --spark-deep:    #C89300;
+  --spark-deep:    #9A6C00;
   --spark-soft:    var(--yellow-light);
   --spark-glow:    #FFE566;
 
