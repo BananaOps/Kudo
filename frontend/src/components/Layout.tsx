@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useState } from 'react';
 import { UserSelector } from './UserSelector';
+import { ZapMascot } from './ZapMascot';
 
 interface NavItem { to: string; icon: string; label: string; end?: boolean; }
 const navItems: NavItem[] = [
@@ -23,15 +24,14 @@ function NavButton({ item }: { item: NavItem }) {
       {({ isActive }) => (
         <>
           <div style={{
-            width: 44, height: 44, borderRadius: 12,
+            width: 44, height: 44, borderRadius: 6,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             background: isActive
-              ? 'var(--ink)'
-              : hovered ? 'var(--surface-2)' : 'transparent',
-            color: isActive ? 'var(--spark)' : hovered ? 'var(--ink)' : 'var(--muted)',
+              ? 'rgba(255,255,255,0.25)'
+              : hovered ? 'rgba(255,255,255,0.15)' : 'transparent',
+            color: isActive ? '#fff' : hovered ? '#fff' : 'rgba(255,255,255,0.7)',
             fontSize: 15, cursor: 'pointer',
             transition: 'background 0.12s, color 0.12s',
-            boxShadow: isActive ? '0 2px 8px rgba(31,31,53,0.18)' : 'none',
           }}>
             <i className={item.icon} />
           </div>
@@ -40,9 +40,9 @@ function NavButton({ item }: { item: NavItem }) {
               position: 'absolute', left: 56, top: '50%', transform: 'translateY(-50%)',
               background: 'var(--ink)', color: '#fff', fontSize: 12,
               fontFamily: 'var(--font-sans)', fontWeight: 500,
-              padding: '5px 11px', borderRadius: 8, whiteSpace: 'nowrap',
+              padding: '5px 11px', borderRadius: 4, whiteSpace: 'nowrap',
               zIndex: 100, pointerEvents: 'none',
-              boxShadow: '0 4px 12px rgba(31,31,53,0.15)',
+              boxShadow: '0 4px 12px rgba(31,31,46,0.2)',
             }}>{item.label}</div>
           )}
         </>
@@ -56,20 +56,20 @@ export function Layout() {
     <div style={{ display: 'grid', gridTemplateColumns: '72px 1fr', minHeight: '100vh' }}>
       <aside style={{
         width: 72, position: 'sticky', top: 0, height: '100vh',
-        background: 'var(--surface)',
-        borderRight: '1px solid var(--line)',
+        background: 'var(--coral)',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
-        padding: '20px 0 16px', gap: 4,
+        padding: '16px 0 16px', gap: 4,
       }}>
-        {/* Brand */}
+        {/* Mascot logo */}
         <div style={{
-          width: 40, height: 40, borderRadius: 12,
-          background: 'linear-gradient(135deg, var(--ink) 0%, #2E2E55 100%)',
-          color: 'var(--spark)', fontSize: 18,
+          width: 44, height: 44, borderRadius: 8,
+          background: '#FFE8E5',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          marginBottom: 20, flexShrink: 0,
-          boxShadow: '0 0 0 3px var(--spark-soft), 0 4px 12px rgba(31,31,53,0.2)',
-        }}>⚡</div>
+          marginBottom: 16, flexShrink: 0,
+          boxShadow: '0 0 0 2px rgba(255,255,255,0.3)',
+        }}>
+          <ZapMascot size={28} />
+        </div>
 
         {navItems.map(item => <NavButton key={item.to} item={item} />)}
 
