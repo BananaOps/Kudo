@@ -62,7 +62,7 @@ export function Layout() {
       }}>
         {/* Mascot logo */}
         <div style={{
-          width: 44, height: 44, borderRadius: 8,
+          width: 44, height: 44, borderRadius: 'var(--radius-lg)',
           background: '#FFE8E5',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           marginBottom: 16, flexShrink: 0,
