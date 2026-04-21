@@ -34,7 +34,6 @@ export function MyKudosPage() {
   const { userId } = useUser();
   const state = useMyKudos(userId);
   const [tab, setTab] = useState<'received' | 'given'>('received');
-  const [heatTab, setHeatTab] = useState<'30d' | 'year' | 'all'>('year');
 
   const segStyle = (active: boolean) => ({
     padding: '4px 10px', borderRadius: 'var(--radius-sm)', border: 'none', cursor: 'pointer',
@@ -135,13 +134,8 @@ export function MyKudosPage() {
 
       {/* Heatmap */}
       <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', marginBottom: 24 }}>
-        <div style={{ padding: '16px 22px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ padding: '16px 22px', borderBottom: '1px solid var(--line)' }}>
           <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--ink)' }}>Your year in sparks</div>
-          <div style={{ display: 'flex', background: 'var(--surface-2)', borderRadius: 8, padding: 3, gap: 2 }}>
-            {(['30d', 'year', 'all'] as const).map(t => (
-              <button key={t} onClick={() => setHeatTab(t)} style={segStyle(heatTab === t)}>{t}</button>
-            ))}
-          </div>
         </div>
         <div style={{ padding: '18px 22px' }}>
           <Heatmap />
