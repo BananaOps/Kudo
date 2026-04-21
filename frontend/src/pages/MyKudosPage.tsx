@@ -23,9 +23,9 @@ function Skeleton() {
 function StatsGrid({ stats }: { stats: KudosStats }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 32 }}>
-      <StatCard icon="fa-solid fa-bolt" label="Received this week" value={stats.receivedThisWeek} trendType="up" trendText="+2 vs last week" />
-      <StatCard icon="fa-solid fa-calendar" label="Received this month" value={stats.receivedThisMonth} trendText="Last 30 days" />
-      <StatCard icon="fa-solid fa-paper-plane" label="Given this week" value={stats.givenThisWeek} trendText="Spread the energy" />
+      <StatCard icon="fa-solid fa-bolt" label="Received this week" value={stats.receivedThisWeek} trendType="up" trendText="+2 vs last week" color="coral" />
+      <StatCard icon="fa-solid fa-calendar" label="Received this month" value={stats.receivedThisMonth} trendText="Last 30 days" color="teal" />
+      <StatCard icon="fa-solid fa-paper-plane" label="Given this week" value={stats.givenThisWeek} trendText="Spread the energy" color="yellow" />
     </div>
   );
 }
@@ -37,10 +37,10 @@ export function MyKudosPage() {
   const [heatTab, setHeatTab] = useState<'30d' | 'year' | 'all'>('year');
 
   const segStyle = (active: boolean) => ({
-    padding: '4px 10px', borderRadius: 6, border: 'none', cursor: 'pointer',
-    fontSize: 12, fontFamily: 'var(--font-sans)', fontWeight: active ? 500 : 400,
-    background: active ? 'var(--surface)' : 'transparent',
-    color: active ? 'var(--ink)' : 'var(--muted)',
+    padding: '4px 10px', borderRadius: 'var(--radius-sm)', border: 'none', cursor: 'pointer',
+    fontSize: 12, fontFamily: 'var(--font-sans)', fontWeight: active ? 600 : 400,
+    background: active ? 'var(--coral-light)' : 'transparent',
+    color: active ? 'var(--coral-dark)' : 'var(--muted)',
   });
 
   const kudos: Kudo[] = state.status === 'success'
@@ -105,21 +105,21 @@ export function MyKudosPage() {
 
       {/* Profile header */}
       <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 20, alignItems: 'center', borderBottom: '1px solid var(--line)', paddingBottom: 24, marginBottom: 28 }}>
-        <div style={{ width: 84, height: 84, borderRadius: '50%', background: 'var(--spark)', color: 'var(--ink)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', fontSize: 28, fontWeight: 800, flexShrink: 0 }}>A</div>
+        <div style={{ width: 84, height: 84, borderRadius: 'var(--radius)', background: 'var(--coral)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', fontSize: 28, fontWeight: 800, flexShrink: 0 }}>A</div>
         <div>
           <h1 style={{ fontFamily: 'var(--font-sans)', fontSize: 44, fontWeight: 800, lineHeight: 1.06, margin: '0 0 6px', color: 'var(--ink)', letterSpacing: '-0.8px' }}>
             {state.status === 'success'
-              ? <>People gave you <em style={{ color: 'var(--spark-deep)', fontStyle: 'italic' }}>{state.data.stats.receivedThisMonth} ⚡</em> this month.</>
+              ? <>People gave you <em style={{ color: 'var(--coral)', fontStyle: 'italic' }}>{state.data.stats.receivedThisMonth} ⚡</em> this month.</>
               : <>My Kudos</>}
           </h1>
           <p style={{ color: 'var(--muted)', fontSize: 14, margin: '0 0 12px' }}>Recognition you've received from your teammates</p>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <span style={{ background: 'var(--spark-soft)', border: '1px solid #F0DE9A', color: 'var(--spark-deep)', borderRadius: 999, padding: '4px 10px', fontSize: 12, fontWeight: 600 }}>⚡ 412 sparks all time</span>
-            <span style={{ background: 'var(--surface-2)', border: '1px solid var(--line)', borderRadius: 999, padding: '4px 10px', fontSize: 12, color: 'var(--muted)' }}>Joined Aug 2024</span>
-            <span style={{ background: 'var(--surface-2)', border: '1px solid var(--line)', borderRadius: 999, padding: '4px 10px', fontSize: 12, color: 'var(--muted)' }}>🔥 12-day giving streak</span>
+            <span style={{ background: 'var(--yellow-light)', border: '1px solid var(--yellow-border)', color: 'var(--spark-deep)', borderRadius: 'var(--radius-sm)', padding: '4px 10px', fontSize: 12, fontWeight: 600 }}>⚡ 412 sparks all time</span>
+            <span style={{ background: 'var(--surface-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius-sm)', padding: '4px 10px', fontSize: 12, color: 'var(--muted)' }}>Joined Aug 2024</span>
+            <span style={{ background: 'var(--teal-light)', border: '1px solid var(--teal-border)', borderRadius: 'var(--radius-sm)', padding: '4px 10px', fontSize: 12, color: 'var(--teal)', fontWeight: 600 }}>🔥 12-day giving streak</span>
           </div>
         </div>
-        <button style={{ background: 'var(--spark)', color: 'var(--ink)', border: '1px solid var(--spark-deep)', padding: '9px 14px', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-sans)', whiteSpace: 'nowrap' }}>
+        <button style={{ background: 'var(--coral)', color: '#fff', border: '1px solid var(--coral-dark)', padding: '9px 14px', borderRadius: 'var(--radius)', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-sans)', whiteSpace: 'nowrap' }}>
           <i className="fa-solid fa-bolt" /> Send a Spark
         </button>
       </div>
@@ -210,9 +210,9 @@ export function MyKudosPage() {
               {wordCloud.map((w, idx) => (
                 <span key={w.word} style={{
                   fontSize: Math.max(12, Math.min(20, 12 + w.count * 2)),
-                  padding: '4px 10px', borderRadius: 999,
-                  background: idx < 3 ? 'var(--spark-soft)' : 'var(--surface-2)',
-                  border: `1px solid ${idx < 3 ? '#F0DE9A' : 'var(--line)'}`,
+                  padding: '4px 10px', borderRadius: 'var(--radius-sm)',
+                  background: idx < 3 ? 'var(--yellow-light)' : 'var(--surface-2)',
+                  border: `1px solid ${idx < 3 ? 'var(--yellow-border)' : 'var(--line)'}`,
                   color: idx < 3 ? 'var(--spark-deep)' : 'var(--ink-2)',
                   fontWeight: idx < 3 ? 600 : 400,
                 }}>
