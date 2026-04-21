@@ -89,9 +89,6 @@ export function MyKudosPage() {
           <span style={{ color: 'var(--ink)', fontWeight: 500 }}>Activity</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button style={{ background: 'var(--surface)', border: '1px solid var(--line)', padding: '7px 12px', borderRadius: 10, fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font-sans)', color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <i className="fa-solid fa-download" style={{ fontSize: 12 }} /> Export for review
-          </button>
           <div style={{ display: 'flex', background: 'var(--surface-2)', borderRadius: 8, padding: 3, gap: 2 }}>
             {(['received', 'given'] as const).map(t => (
               <button key={t} onClick={() => setTab(t)} style={segStyle(tab === t)}>
