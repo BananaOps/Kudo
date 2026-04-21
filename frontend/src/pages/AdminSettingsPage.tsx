@@ -137,6 +137,73 @@ function Section({ icon, title, description, children }: {
   );
 }
 
+// ── Emoji picker ─────────────────────────────────────────────────────────────
+
+const EMOJI_OPTIONS = ['⚡', '🌟', '🔥', '💫', '🎉', '🚀', '💎', '🌈', '🏆', '❤️', '👏', '🤝'];
+
+interface EmojiPickerProps {
+  value: string;
+  onChange: (emoji: string) => void;
+  hasError?: boolean;
+}
+
+function EmojiPicker({ value, onChange, hasError }: EmojiPickerProps) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {/* Grid of preset options */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+        {EMOJI_OPTIONS.map((emoji) => {
+          const active = value === emoji;
+          return (
+            <button
+              key={emoji}
+              type="button"
+              onClick={() => onChange(emoji)}
+              title={emoji}
+              style={{
+                width: 40, height: 40, fontSize: 20,
+                borderRadius: 'var(--radius-sm)',
+                border: `1px solid ${active ? 'var(--coral)' : 'var(--line)'}`,
+                background: active ? 'var(--coral-light)' : 'var(--surface)',
+                cursor: 'pointer',
+                boxShadow: active ? '0 0 0 3px var(--coral-border)' : 'none',
+                transition: 'all 0.1s',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+              onMouseEnter={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface-2)'; }}
+              onMouseLeave={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface)'; }}
+            >
+              {emoji}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Input — toujours lié à la valeur courante, permet aussi un emoji custom */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <input
+          id="emoji"
+          type="text"
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder="⚡"
+          style={{
+            width: 80, padding: '7px 10px', textAlign: 'center', fontSize: 18,
+            border: `1px solid ${hasError ? 'var(--danger)' : 'var(--line)'}`,
+            borderRadius: 'var(--radius-sm)',
+            fontFamily: 'var(--font-sans)', color: 'var(--ink)',
+            background: 'var(--surface)', outline: 'none',
+            boxSizing: 'border-box' as const,
+          }}
+        />
+        <span style={{ fontSize: 11, color: 'var(--muted)', fontFamily: 'var(--font-sans)' }}>
+          or type any emoji
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // ── AdminSettingsForm ─────────────────────────────────────────────────────────
 
 interface AdminSettingsFormProps {
@@ -184,16 +251,11 @@ function AdminSettingsForm({ initialValues, saveState, onSubmit }: AdminSettings
         title="Kudo currency"
         description="Customize the emoji and name members use when giving recognition."
       >
-        <Field id="emoji" label="Currency emoji" hint='The emoji that triggers a kudo — e.g. ⚡ or 🌟.' error={errors.emoji}>
-          <FieldInput
-            id="emoji"
-            type="text"
+        <Field id="emoji" label="Currency emoji" hint="Click to choose the emoji members type to give a kudo." error={errors.emoji}>
+          <EmojiPicker
             value={values.emoji}
-            onChange={(e) => set("emoji", e.target.value)}
-            placeholder="⚡"
+            onChange={(v) => set("emoji", v)}
             hasError={!!errors.emoji}
-            aria-invalid={!!errors.emoji}
-            narrow
           />
         </Field>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
