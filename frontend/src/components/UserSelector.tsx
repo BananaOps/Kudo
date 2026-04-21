@@ -11,11 +11,11 @@ function initials(name: string): string {
 }
 
 const AVATAR_COLORS: [string, string][] = [
-  ['#F5B800', '#1F1F35'],
-  ['#7C6FFF', '#fff'],
-  ['#00C9A7', '#fff'],
-  ['#FF6B6B', '#fff'],
-  ['#4ECDC4', '#1F1F35'],
+  ['#FF7B6B', '#fff'],    // coral
+  ['#3BBFA3', '#fff'],    // teal
+  ['#F5B800', '#1F1F2E'], // yellow (texte sombre)
+  ['#F472B6', '#fff'],    // pink
+  ['#60A5FA', '#fff'],    // sky
 ];
 
 function avatarColor(name: string): [string, string] {
@@ -50,7 +50,7 @@ export function UserSelector() {
         title={displayName}
         aria-label="Changer d'utilisateur"
         style={{
-          width: 36, height: 36, borderRadius: '50%',
+          width: 36, height: 36, borderRadius: 'var(--radius-sm)',
           background: bg, color: fg, fontWeight: 700, fontSize: 12,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontFamily: 'var(--font-sans)', border: 'none',
@@ -68,7 +68,7 @@ export function UserSelector() {
         <div style={{
           position: 'absolute', left: 48, bottom: 0,
           background: 'var(--surface)', border: '1px solid var(--line)',
-          borderRadius: 12, padding: '6px 0',
+          borderRadius: 'var(--radius)', padding: '6px 0',
           minWidth: 200, boxShadow: '0 8px 24px rgba(31,31,53,0.14)',
           zIndex: 200,
         }}>
@@ -103,7 +103,7 @@ export function UserSelector() {
                 onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
               >
                 <div style={{
-                  width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
+                  width: 28, height: 28, borderRadius: 'var(--radius-sm)', flexShrink: 0,
                   background: ubg, color: ufg, fontSize: 10, fontWeight: 700,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
