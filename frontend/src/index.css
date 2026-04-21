@@ -2,42 +2,68 @@
 @import "tailwindcss";
 
 :root {
+  /* — Coral (couleur principale) — */
+  --coral:         #FF7B6B;
+  --coral-light:   #FFF0EE;
+  --coral-border:  #FFD4CE;
+  --coral-dark:    #D95E50;
+
+  /* — Teal (accent secondaire) — */
+  --teal:          #3BBFA3;
+  --teal-light:    #EFF9F6;
+  --teal-border:   #B2EAE0;
+
+  /* — Yellow (sparks, streak) — */
+  --yellow:        #F5B800;
+  --yellow-light:  #FFF8E8;
+  --yellow-border: #FFE4A0;
+
+  /* — Pink (variété, leaderboard) — */
+  --pink:          #F472B6;
+  --pink-light:    #FFF0F9;
+  --pink-border:   #FFD6F0;
+
+  /* — Sky (5e couleur) — */
+  --sky:           #60A5FA;
+  --sky-light:     #EFF6FF;
+  --sky-border:    #BFDBFE;
+
+  /* — Alias rétro-compat (utilisés dans les composants existants) — */
+  --spark:         var(--yellow);
+  --spark-deep:    #C89300;
+  --spark-soft:    var(--yellow-light);
+  --spark-glow:    #FFE566;
+
   /* — Surfaces — */
-  --bg: #F7F7FA;
-  --surface: #FFFFFF;
-  --surface-2: #EDEDF4;
-  --line: #E1E1EC;
-  --line-strong: #C9C9DC;
+  --bg:            #FAFAF8;
+  --surface:       #FFFFFF;
+  --surface-2:     #F5F5F2;
+  --line:          #E8E8E4;
+  --line-strong:   #D0D0CC;
 
-  /* — Ink (deep navy-charcoal, pas noir brutal) — */
-  --ink: #1F1F35;
-  --ink-2: #3E3E5E;
-  --muted: #7878A0;
-  --muted-2: #ABABC8;
-
-  /* — Spark — */
-  --spark: #F5B800;
-  --spark-deep: #B8890A;
-  --spark-soft: #FFF5CC;
-  --spark-glow: #FFE566;
+  /* — Ink — */
+  --ink:           #1F1F2E;
+  --ink-2:         #3E3E5E;
+  --muted:         #7878A0;
+  --muted-2:       #ABABC8;
 
   /* — Sémantiques — */
-  --good: #059669;
-  --danger: #DC2626;
+  --good:          #059669;
+  --danger:        #DC2626;
 
-  /* — Shape — */
-  --radius: 12px;
-  --radius-sm: 8px;
-  --radius-lg: 18px;
+  /* — Shape (Slack-like, carré) — */
+  --radius:        6px;
+  --radius-sm:     4px;
+  --radius-lg:     8px;
+  --radius-pill:   999px;
 
-  /* — Shadows (teintées navy) — */
-  --shadow-sm: 0 1px 0 rgba(31,31,53,0.04), 0 1px 3px rgba(31,31,53,0.05);
-  --shadow-md: 0 1px 0 rgba(31,31,53,0.03), 0 8px 24px -8px rgba(31,31,53,0.10);
-  --shadow-lg: 0 2px 0 rgba(31,31,53,0.02), 0 24px 48px -12px rgba(31,31,53,0.16);
+  /* — Shadows — */
+  --shadow-sm: 0 1px 0 rgba(31,31,46,0.04), 0 1px 3px rgba(31,31,46,0.06);
+  --shadow-md: 0 1px 0 rgba(31,31,46,0.03), 0 8px 24px -8px rgba(31,31,46,0.12);
+  --shadow-lg: 0 2px 0 rgba(31,31,46,0.02), 0 24px 48px -12px rgba(31,31,46,0.18);
 
   /* — Typography — */
   --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-serif: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
@@ -54,5 +80,4 @@ html, body {
 
 * { box-sizing: border-box; }
 
-.serif { font-family: var(--font-serif); }
 .mono { font-family: var(--font-mono); }
