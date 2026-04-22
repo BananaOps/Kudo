@@ -31,7 +31,7 @@ describe("LeaderboardPage", () => {
 
   it("shows empty state when no entries", () => {
     renderPage([]);
-    expect(screen.getByText(/no kudos given yet/i)).toBeInTheDocument();
+    expect(screen.getByText(/no kudos received this week yet/i)).toBeInTheDocument();
   });
 
   it("renders medal emojis for top 3", () => {
@@ -43,6 +43,6 @@ describe("LeaderboardPage", () => {
 
   it("pre-selects given tab from query param", () => {
     renderPage(MOCK_ENTRIES, '?tab=given&period=week');
-    expect(screen.getByText(/généreuses/i)).toBeInTheDocument();
+    expect(screen.getByText(/generous/i)).toBeInTheDocument();
   });
 });

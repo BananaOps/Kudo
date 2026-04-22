@@ -23,12 +23,16 @@ func (s *stubRepo) ListBySender(_, _ string) ([]kudos.Kudo, error)    { panic("n
 func (s *stubRepo) TopRecipients(_ string, _ int, _ *time.Time) ([]kudos.LeaderboardEntry, error) {
 	panic("not implemented")
 }
+func (s *stubRepo) TopSenders(_ string, _ int, _ *time.Time) ([]kudos.LeaderboardEntry, error) {
+	panic("not implemented")
+}
 func (s *stubRepo) StatsForUser(_, _ string, _ int) (*kudos.Stats, error) {
 	panic("not implemented")
 }
 func (s *stubRepo) ChannelStats(_ string) ([]kudos.ChannelStat, error) {
 	panic("not implemented")
 }
+func (s *stubRepo) ListUsers(_ string) ([]kudos.UserProfile, error) { panic("not implemented") }
 
 func TestCheckQuota(t *testing.T) {
 	today := time.Date(2024, 1, 15, 9, 0, 0, 0, time.UTC)

@@ -269,10 +269,10 @@ interface AdminSettingsFormProps {
   initialValues: AdminSettings;
   saveState: { status: string; message?: string };
   onSubmit: (values: AdminSettings) => Promise<void>;
-  onSaved: (values: AdminSettings) => void;
+  onSaved?: (values: AdminSettings) => void;
 }
 
-function AdminSettingsForm({ initialValues, saveState, onSubmit, onSaved }: AdminSettingsFormProps) {
+function AdminSettingsForm({ initialValues, saveState, onSubmit, onSaved = () => {} }: AdminSettingsFormProps) {
   const [values, setValues] = useState<AdminSettings>(initialValues);
   const [errors, setErrors] = useState<AdminSettingsErrors>({});
   const [dirty, setDirty] = useState(false);
