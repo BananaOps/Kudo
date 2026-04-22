@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "kudo.fullname" . }}
+  labels:
+    {{- include "kudo.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "kudo.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "kudo.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.http.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          env:
+            - name: PORT
+              value: {{ .Values.service.http.port | quote }}
+            - name: MONGODB_URI
+              value: {{ .Values.env.mongodb.uri | default (printf "mongodb://%s-mongodb:27017" (include "kudo.fullname" .)) | quote }}
+            - name: MONGODB_DB
+              value: {{ .Values.env.mongodb.db | quote }}
+            - name: DEFAULT_WORKSPACE_ID
+              value: {{ .Values.env.app.workspaceId | quote }}
+            - name: APP_URL
+              value: {{ .Values.env.app.url | quote }}
+            - name: SESSION_SECRET
+              value: {{ .Values.env.app.sessionSecret | quote }}
+            {{- if .Values.env.app.adminUserIds }}
+            - name: ADMIN_USER_IDS
+              value: {{ .Values.env.app.adminUserIds | quote }}
+            {{- end }}
+            - name: SLACK_SIGNING_SECRET
+              value: {{ .Values.env.slack.signingSecret | quote }}
+            - name: SLACK_BOT_TOKEN
+              value: {{ .Values.env.slack.botToken | quote }}
+            {{- if .Values.env.slack.clientId }}
+            - name: SLACK_CLIENT_ID
+              value: {{ .Values.env.slack.clientId | quote }}
+            {{- end }}
+            {{- if .Values.env.slack.clientSecret }}
+            - name: SLACK_CLIENT_SECRET
+              value: {{ .Values.env.slack.clientSecret | quote }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

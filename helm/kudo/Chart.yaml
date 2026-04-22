@@ -1,0 +1,11 @@
+apiVersion: v2
+name: kudo
+description: A Helm chart for deploying Kudo, an open-source peer recognition platform powered by Slack
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+dependencies:
+  - condition: mongodb.enabled
+    name: mongodb
+    repository: oci://registry-1.docker.io/bitnamicharts
+    version: 14.x.x

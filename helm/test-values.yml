@@ -1,0 +1,15 @@
+env:
+  slack:
+    signingSecret: "test-signing-secret"
+    botToken: "xoxb-test"
+  app:
+    url: "http://kudo.test"
+    workspaceId: "T_TEST"
+
+prometheus:
+  monitor:
+    enabled: false
+
+victoriametrics:
+  monitor:
+    enabled: false
