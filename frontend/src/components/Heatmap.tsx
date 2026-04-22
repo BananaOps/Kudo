@@ -7,13 +7,13 @@
  *   weeks   number                  Number of weeks to display (default 52).
  */
 
-// Coral-scale from empty → full
+// Primary-colour scale from empty → full (driven by CSS vars set by ThemeContext)
 const SCALE = [
-  'var(--surface-2)', // 0 — no activity
+  'var(--surface-2)',  // 0 — no activity
   'var(--coral-light)',// 1 — low
-  '#FFB3A7',          // 2 — medium-low
-  '#FF7B6B',          // 3 — medium-high  (= var(--coral))
-  '#D95E50',          // 4 — high         (= var(--coral-dark))
+  'var(--coral-mid)',  // 2 — medium-low
+  'var(--coral)',      // 3 — medium-high
+  'var(--coral-dark)', // 4 — high
 ];
 
 function intensity(val: number): number {
@@ -63,7 +63,8 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 const DAY_LABELS   = ['Mon', '', 'Wed', '', 'Fri', '', ''];
 
 export function Heatmap({ data, weeks = 52 }: HeatmapProps) {
-  const resolved = data ?? buildDemoData(weeks);
+  // Use real data when provided (even empty {}), demo only when data is undefined.
+  const resolved = data !== undefined ? data : buildDemoData(weeks);
 
   // Build ordered grid: weeks (oldest → newest), 7 days each
   const grid: { date: string; val: number }[][] = [];

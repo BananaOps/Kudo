@@ -295,8 +295,11 @@ func (r *KudosRepository) ChannelStats(workspaceID string) ([]kudos.ChannelStat,
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
+	matchFilter := wsFilter(workspaceID)
+	matchFilter = append(matchFilter, bson.E{Key: "channel", Value: bson.D{{Key: "$nin", Value: bson.A{"", nil}}}})
+
 	pipeline := mongo.Pipeline{
-		{{Key: "$match", Value: wsFilter(workspaceID)}},
+		{{Key: "$match", Value: matchFilter}},
 		{{Key: "$group", Value: bson.D{
 			{Key: "_id", Value: "$channel"},
 			{Key: "count", Value: bson.D{{Key: "$sum", Value: 1}}},

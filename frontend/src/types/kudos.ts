@@ -77,6 +77,8 @@ export interface AdminSettings {
   currencySingular: string;
   currencyPlural: string;
   dailyAllowance: number;
+  colorCoral: string;
+  colorTeal: string;
 }
 
 /** Client-side validation errors for AdminSettings. */
@@ -84,4 +86,38 @@ export type AdminSettingsErrors = Partial<Record<keyof AdminSettings, string>>;
 
 export type PeriodFilter = 'week' | 'month' | 'allTime';
 export type LeaderboardTab = 'receivers' | 'givers';
+
+// ── Challenges ────────────────────────────────────────────────────────────────
+
+export type CompletionStatus = 'pending' | 'approved' | 'rejected';
+
+export interface Challenge {
+  id: string;
+  workspaceId: string;
+  title: string;
+  description: string;
+  kudoReward: number;
+  expiresAt?: string;
+  isActive: boolean;
+  createdById: string;
+  createdByName: string;
+  createdAt: string;
+  /** Only present in GET /api/challenges (user view) */
+  userStatus?: CompletionStatus | '';
+}
+
+export interface ChallengeCompletion {
+  id: string;
+  challengeId: string;
+  challengeTitle: string;
+  workspaceId: string;
+  userId: string;
+  userName: string;
+  note: string;
+  status: CompletionStatus;
+  requestedAt: string;
+  reviewedAt?: string;
+  reviewedById?: string;
+  reviewedByName?: string;
+}
 

@@ -3,6 +3,29 @@ import { useUsers } from '../hooks/useUsers';
 import { useUser } from '../context/UserContext';
 import { Avatar } from './Avatar';
 
+interface SendResult { error?: string; }
+
+async function sendKudo(payload: {
+  toUserId: string; toUserName: string;
+  fromUserName: string;
+  message: string; emojiCount: number;
+}): Promise<SendResult> {
+  const res = await fetch('/api/kudos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      to_user_id: payload.toUserId,
+      to_user_name: payload.toUserName,
+      from_user_name: payload.fromUserName,
+      message: payload.message,
+      emoji_count: payload.emojiCount,
+    }),
+  });
+  if (res.ok) return {};
+  const data = await res.json().catch(() => ({}));
+  return { error: (data as { error?: string }).error ?? `Erreur ${res.status}` };
+}
+
 interface SendSparkModalProps {
   open: boolean;
   onClose: () => void;
@@ -10,7 +33,7 @@ interface SendSparkModalProps {
 
 export function SendSparkModal({ open, onClose }: SendSparkModalProps) {
   const { users } = useUsers();
-  const { userId: currentUserId } = useUser();
+  const { userId: currentUserId, userName: currentUserName } = useUser();
 
   const [toUserId, setToUserId] = useState('');
   const [message, setMessage] = useState('');
@@ -18,6 +41,8 @@ export function SendSparkModal({ open, onClose }: SendSparkModalProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [messageFocused, setMessageFocused] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -55,8 +80,28 @@ export function SendSparkModal({ open, onClose }: SendSparkModalProps) {
       setAmount(1);
       setSearch('');
       setDropdownOpen(false);
+      setSubmitError('');
     }
   }, [open]);
+
+  const handleSubmit = async () => {
+    if (!canSubmit || submitting) return;
+    setSubmitting(true);
+    setSubmitError('');
+    const result = await sendKudo({
+      toUserId,
+      toUserName: selectedUser?.name ?? '',
+      fromUserName: currentUserName,
+      message,
+      emojiCount: amount,
+    });
+    setSubmitting(false);
+    if (result.error) {
+      setSubmitError(result.error);
+    } else {
+      onClose();
+    }
+  };
 
   if (!open) return null;
 
@@ -276,6 +321,13 @@ export function SendSparkModal({ open, onClose }: SendSparkModalProps) {
             />
           </div>
 
+          {/* Error */}
+          {submitError && (
+            <div style={{ background: '#FEF2F2', border: '1px solid #FCA5A5', borderRadius: 'var(--radius-sm)', padding: '10px 14px', fontSize: 13, color: '#DC2626' }}>
+              {submitError}
+            </div>
+          )}
+
           {/* Actions */}
           <div style={{ display: 'flex', gap: 10, marginTop: 2 }}>
             <button
@@ -291,21 +343,25 @@ export function SendSparkModal({ open, onClose }: SendSparkModalProps) {
               Cancel
             </button>
             <button
-              onClick={canSubmit ? onClose : undefined}
+              onClick={handleSubmit}
+              disabled={!canSubmit || submitting}
               style={{
                 flex: 2, padding: '10px',
-                background: canSubmit ? 'var(--coral)' : 'var(--surface-2)',
-                color: canSubmit ? '#fff' : 'var(--muted-2)',
-                border: `1px solid ${canSubmit ? 'var(--coral-dark)' : 'var(--line)'}`,
+                background: canSubmit && !submitting ? 'var(--coral)' : 'var(--surface-2)',
+                color: canSubmit && !submitting ? '#fff' : 'var(--muted-2)',
+                border: `1px solid ${canSubmit && !submitting ? 'var(--coral-dark)' : 'var(--line)'}`,
                 borderRadius: 'var(--radius-sm)',
                 fontSize: 13, fontWeight: 600,
-                cursor: canSubmit ? 'pointer' : 'not-allowed',
+                cursor: canSubmit && !submitting ? 'pointer' : 'not-allowed',
                 fontFamily: 'var(--font-sans)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                 transition: 'background 0.12s, color 0.12s',
               }}
             >
-              <i className="fa-solid fa-paper-plane" /> Send Spark
+              {submitting
+                ? <><i className="fa-solid fa-spinner fa-spin" /> Sending…</>
+                : <><i className="fa-solid fa-paper-plane" /> Send Spark</>
+              }
             </button>
           </div>
 

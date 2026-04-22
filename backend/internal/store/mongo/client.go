@@ -11,8 +11,10 @@ import (
 )
 
 const (
-	ColKudos      = "kudos"
-	ColWorkspaces = "workspaces"
+	ColKudos        = "kudos"
+	ColWorkspaces   = "workspaces"
+	ColChallenges   = "challenges"
+	ColCompletions  = "challenge_completions"
 )
 
 // Client wraps a connected mongo.Client and exposes typed collection accessors.
@@ -54,4 +56,12 @@ func (c *Client) KudosRepo() *KudosRepository {
 // WorkspaceRepo returns a WorkspaceRepository backed by the workspaces collection.
 func (c *Client) WorkspaceRepo() *WorkspaceRepository {
 	return &WorkspaceRepository{col: c.db.Collection(ColWorkspaces)}
+}
+
+// ChallengesRepo returns a ChallengesRepository backed by the challenges collections.
+func (c *Client) ChallengesRepo() *ChallengesRepository {
+	return &ChallengesRepository{
+		challenges:  c.db.Collection(ColChallenges),
+		completions: c.db.Collection(ColCompletions),
+	}
 }

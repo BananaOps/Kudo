@@ -35,7 +35,7 @@
 Kudo lets your Slack workspace recognize teammates by dropping a currency emoji in any message:
 
 ```
-🌮 @alice great work on the release!
+⚡ @alice great work on the release!
 ```
 
 - **Give kudos** — mention a colleague + the workspace currency emoji in Slack.
@@ -141,6 +141,9 @@ Create a `.env` file at the repo root (copy from `.env.example`, never commit it
 | `MONGODB_DB` | no | `kudo` | MongoDB database name |
 | `SLACK_SIGNING_SECRET` | **yes** | — | Signing secret for verifying Slack webhook requests. Found in your app's **Basic Information** page. |
 | `SLACK_BOT_TOKEN` | no | — | Bot OAuth token (`xoxb-…`). Needed only when the bot posts messages back to Slack. Obtained after installing the app to a workspace. |
+| `DEFAULT_WORKSPACE_ID` | no | — | Workspace ID injected into HTTP requests when no Slack workspace can be determined (useful in dev/demo mode). |
+| `DEFAULT_USER_ID` | no | `U001` | User ID used for the web dashboard when no Slack identity is available. |
+| `DEFAULT_USER_NAME` | no | `Alex` | Display name paired with `DEFAULT_USER_ID`. |
 
 > See **[docs/slack-setup.md](docs/slack-setup.md)** for a step-by-step guide to creating the Slack app and obtaining these credentials.
 
@@ -153,16 +156,6 @@ Create a `.env` file at the repo root (copy from `.env.example`, never commit it
 ```
 GET /healthz
 → 200 { "status": "ok" }
-```
-
-### Kudos
-
-```
-POST /kudos
-Body: { workspace_id, from_user_id, to_user_id, message }
-→ 201 { "kudo": { ... } }
-→ 422 ErrSelfKudo
-→ 429 ErrQuotaExceeded
 ```
 
 ### My kudos
@@ -232,6 +225,19 @@ task test    # backend tests + frontend tests
 task lint    # go vet + tsc --noEmit
 task clean   # remove all build artefacts
 ```
+
+### Seed data (development)
+
+A Node.js seed script populates MongoDB with realistic kudos data for local development and demos.
+
+```bash
+cd scripts
+npm install
+node seed.js          # insert 200 kudos across 8 users
+node seed.js --clear  # drop the collection first, then seed
+```
+
+The script reads connection settings from the root `.env` file (`MONGODB_URI`, `MONGODB_DB`, `DEFAULT_WORKSPACE_ID`). Make sure MongoDB is running before seeding.
 
 ---
 
@@ -332,6 +338,9 @@ Kudo/
 ├── .env.example                      # env template
 ├── .github/
 │   └── workflows/ci.yml
+├── scripts/
+│   ├── seed.js                       # Node.js seed script (200 kudos, 8 users)
+│   └── package.json                  # ESM module, deps: mongodb + dotenv
 ├── backend/
 │   ├── cmd/api/
 │   │   ├── main.go                   # HTTP server, graceful shutdown

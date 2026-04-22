@@ -1,0 +1,9 @@
+{
+  "name": "kudo-scripts",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "mongodb": "^6.0.0"
+  }
+}

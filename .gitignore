@@ -30,6 +30,9 @@ frontend/.vite/
 # Vitest / coverage
 frontend/coverage/
 
+# Scripts dependencies
+scripts/node_modules/
+
 ## ── Build outputs ────────────────────────────────────────────────────────────
 backend/bin/
 
@@ -50,3 +53,11 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+## ── Claude / AI tooling ──────────────────────────────────────────────────────
+.claude/
+.superpowers/
+docs/superpowers/
+
+## ── Task runner ──────────────────────────────────────────────────────────────
+.task/

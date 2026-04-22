@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import type { LeaderboardEntry } from "../types/kudos";
 import { Avatar } from '../components/Avatar';
 import { SparklineTrend } from '../components/SparklineTrend';
@@ -66,8 +67,7 @@ function PodiumCard({ entry, index }: { entry: LeaderboardEntry; index: number }
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
           <Avatar name={entry.name} index={index} size={isGold ? 84 : 68} />
         </div>
-        <div style={{ fontWeight: 700, fontSize: isGold ? 16 : 14, color: 'var(--ink)', marginBottom: 2 }}>{entry.name}</div>
-        <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 12 }}>Engineer</div>
+        <div style={{ fontWeight: 700, fontSize: isGold ? 16 : 14, color: 'var(--ink)', marginBottom: 12 }}>{entry.name}</div>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 6 }}>
           <span style={{ fontFamily: 'var(--font-sans)', fontSize: isGold ? 52 : 40, fontWeight: 800, lineHeight: 1, letterSpacing: '-1px', color: 'var(--ink)' }}>{entry.kudosCount}</span>
           <span style={{ fontSize: isGold ? 18 : 15, color: pod.text }}>⚡</span>
@@ -108,23 +108,37 @@ export interface LeaderboardPageProps {
   entries?: LeaderboardEntry[];
 }
 
-const PERIOD_LABELS: Record<Period, string> = { week: 'Cette semaine', month: 'Ce mois', all: 'Tout le temps' };
-const TAB_LABELS: Record<Tab, string> = { received: '⚡ Reçus', given: '🎁 Donnés' };
+const PERIOD_LABELS: Record<Period, string> = { week: 'This week', month: 'This month', all: 'All time' };
+const TAB_LABELS: Record<Tab, string> = { received: '⚡ Received', given: '🎁 Given' };
 
 const PERIOD_TITLE: Record<Period, string> = {
-  week:  'cette semaine',
-  month: 'ce mois',
-  all:   'de tous les temps',
+  week:  'this week',
+  month: 'this month',
+  all:   'of all time',
 };
 const TAB_TITLE: Record<Tab, { adjective: string }> = {
-  received: { adjective: 'appréciées' },
-  given:    { adjective: 'généreuses' },
+  received: { adjective: 'appreciated' },
+  given:    { adjective: 'generous' },
 };
 
 export function LeaderboardPage({ entries: entriesProp }: LeaderboardPageProps = {}) {
-  const [period, setPeriodState] = useState<Period>('week');
-  const [tab, setTabState] = useState<Tab>('received');
-  const { data, status, error, setPeriod, setTab } = useLeaderboard('week', 'received');
+  const [searchParams] = useSearchParams();
+  const [period, setPeriodState] = useState<Period>(() => {
+    const p = searchParams.get('period');
+    return p === 'month' || p === 'all' ? p : 'week';
+  });
+  const [tab, setTabState] = useState<Tab>(() => {
+    const t = searchParams.get('tab');
+    return t === 'given' ? 'given' : 'received';
+  });
+  const { data, status, error, setPeriod, setTab } = useLeaderboard(period, tab);
+
+  // Sync URL params into the hook on first render
+  useEffect(() => {
+    setPeriod(period);
+    setTab(tab);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const entries = entriesProp !== undefined ? entriesProp : (data?.entries ?? []);
 
@@ -159,6 +173,7 @@ export function LeaderboardPage({ entries: entriesProp }: LeaderboardPageProps =
           <span>Kudo</span><span style={{ margin: '0 6px' }}>›</span>
           <span style={{ color: 'var(--ink)', fontWeight: 500 }}>Leaderboard</span>
         </div>
+
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--muted)' }}>
           {PERIOD_LABELS[period]} · {new Date().toLocaleDateString('fr-FR')}
         </span>
@@ -167,14 +182,14 @@ export function LeaderboardPage({ entries: entriesProp }: LeaderboardPageProps =
       {/* Header dynamique */}
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontFamily: 'var(--font-sans)', fontSize: 42, fontWeight: 800, lineHeight: 1.06, margin: '0 0 8px', color: 'var(--ink)', letterSpacing: '-1px' }}>
-          Les personnes les plus{' '}
+          The most{' '}
           <em style={{ fontStyle: 'italic', color: 'var(--coral)' }}>{tabInfo.adjective}</em>{' '}
-          {PERIOD_TITLE[period]}
+          people {PERIOD_TITLE[period]}
         </h1>
         <p style={{ color: 'var(--muted)', fontSize: 14, margin: 0 }}>
           {tab === 'received'
-            ? 'Célébrons ceux qui ont été reconnus par leurs collègues.'
-            : 'Célébrons ceux qui ont le plus contribué à la culture de reconnaissance.'}
+            ? 'Celebrating those who have been recognised by their teammates.'
+            : 'Celebrating those who have contributed most to the culture of recognition.'}
         </p>
       </div>
 
@@ -198,7 +213,7 @@ export function LeaderboardPage({ entries: entriesProp }: LeaderboardPageProps =
 
       {isLoading && (
         <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '32px', textAlign: 'center', color: 'var(--muted)' }}>
-          Chargement du leaderboard…
+          Loading leaderboard…
         </div>
       )}
       {isError && (
@@ -209,7 +224,7 @@ export function LeaderboardPage({ entries: entriesProp }: LeaderboardPageProps =
 
       {!isLoading && sorted.length === 0 && (
         <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', padding: '64px 32px', textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>
-          Aucun kudo {tab === 'received' ? 'reçu' : 'donné'} {PERIOD_TITLE[period]} — No kudos given yet 🎉
+          No kudos {tab === 'received' ? 'received' : 'given'} {PERIOD_TITLE[period]} yet 🎉
         </div>
       )}
 
@@ -227,7 +242,7 @@ export function LeaderboardPage({ entries: entriesProp }: LeaderboardPageProps =
           {rest.length > 0 && (
             <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius)', overflow: 'hidden', marginBottom: 32 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '70px 1fr 140px 160px', padding: '10px 20px', background: 'var(--surface-2)', borderBottom: '1px solid var(--line)' }}>
-                {['Rang', 'Collègue', 'Sparks', 'Tendance 7j'].map(col => (
+                {['Rank', 'Colleague', 'Sparks', '7d Trend'].map(col => (
                   <span key={col} style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)', fontWeight: 500 }}>{col}</span>
                 ))}
               </div>

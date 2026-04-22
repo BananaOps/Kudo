@@ -6,6 +6,7 @@ import { Avatar } from '../components/Avatar';
 import { StatCard } from '../components/StatCard';
 import { KudoItem } from '../components/KudoItem';
 import { Heatmap } from '../components/Heatmap';
+import { SendSparkModal } from '../components/SendSparkModal';
 
 const sk = { background: 'var(--surface-2)', borderRadius: 8, animation: 'pulse 1.5s ease-in-out infinite' };
 
@@ -30,10 +31,15 @@ function StatsGrid({ stats }: { stats: KudosStats }) {
   );
 }
 
+function avatarInitials(name: string): string {
+  return name.split(/\s+/).slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('') || '?';
+}
+
 export function MyKudosPage() {
-  const { userId } = useUser();
+  const { userId, userName } = useUser();
   const state = useMyKudos(userId);
   const [tab, setTab] = useState<'received' | 'given'>('received');
+  const [showModal, setShowModal] = useState(false);
 
   const segStyle = (active: boolean) => ({
     padding: '4px 10px', borderRadius: 'var(--radius-sm)', border: 'none', cursor: 'pointer',
@@ -64,6 +70,25 @@ export function MyKudosPage() {
       .slice(0, 5);
   }, [received, kudos, tab]);
 
+  const totalAllTime = useMemo(() =>
+    received.reduce((sum, k) => sum + k.kudosCount, 0)
+  , [received]);
+
+  const firstKudoDate = useMemo(() => {
+    if (!received.length) return null;
+    const oldest = received.reduce((a, b) => a.createdAt < b.createdAt ? a : b);
+    return new Date(oldest.createdAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+  }, [received]);
+
+  const heatmapData = useMemo(() => {
+    const out: Record<string, number> = {};
+    for (const k of received) {
+      const day = k.createdAt.slice(0, 10); // YYYY-MM-DD
+      out[day] = (out[day] ?? 0) + k.kudosCount;
+    }
+    return out;
+  }, [received]);
+
   const wordCloud = useMemo(() => {
     if (!received.length) return [];
     const stopWords = new Set(['le', 'la', 'les', 'de', 'du', 'des', 'un', 'une', 'et', 'en', 'pour', 'sur', 'par', 'ton', 'ta', 'tes', 'the', 'a', 'an', 'and', 'for', 'on', 'with', 'your', 'you', 'tu', 'que', 'qui', 'est', 'il', 'elle', 'ce', 'je', 'nous', 'très', 'au', 'aux']);
@@ -82,6 +107,8 @@ export function MyKudosPage() {
 
   return (
     <>
+      <SendSparkModal open={showModal} onClose={() => setShowModal(false)} />
+
       {/* Topbar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
         <div style={{ fontSize: 12, color: 'var(--muted)' }}>
@@ -101,7 +128,9 @@ export function MyKudosPage() {
 
       {/* Profile header */}
       <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 20, alignItems: 'center', borderBottom: '1px solid var(--line)', paddingBottom: 24, marginBottom: 28 }}>
-        <div style={{ width: 84, height: 84, borderRadius: 'var(--radius)', background: 'var(--coral)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', fontSize: 28, fontWeight: 800, flexShrink: 0 }}>A</div>
+        <div style={{ width: 84, height: 84, borderRadius: 'var(--radius)', background: 'var(--coral)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', fontSize: 28, fontWeight: 800, flexShrink: 0 }}>
+          {avatarInitials(userName)}
+        </div>
         <div>
           <h1 style={{ fontFamily: 'var(--font-sans)', fontSize: 44, fontWeight: 800, lineHeight: 1.06, margin: '0 0 6px', color: 'var(--ink)', letterSpacing: '-0.8px' }}>
             {state.status === 'success'
@@ -110,12 +139,24 @@ export function MyKudosPage() {
           </h1>
           <p style={{ color: 'var(--muted)', fontSize: 14, margin: '0 0 12px' }}>Recognition you've received from your teammates</p>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <span style={{ background: 'var(--yellow-light)', border: '1px solid var(--yellow-border)', color: 'var(--spark-deep)', borderRadius: 'var(--radius-sm)', padding: '4px 10px', fontSize: 12, fontWeight: 600 }}>⚡ 412 sparks all time</span>
-            <span style={{ background: 'var(--surface-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius-sm)', padding: '4px 10px', fontSize: 12, color: 'var(--muted)' }}>Joined Aug 2024</span>
-            <span style={{ background: 'var(--teal-light)', border: '1px solid var(--teal-border)', borderRadius: 'var(--radius-sm)', padding: '4px 10px', fontSize: 12, color: 'var(--teal)', fontWeight: 600 }}>🔥 12-day giving streak</span>
+            {state.status === 'success' && (
+              <span style={{ background: 'var(--yellow-light)', border: '1px solid var(--yellow-border)', color: 'var(--spark-deep)', borderRadius: 'var(--radius-sm)', padding: '4px 10px', fontSize: 12, fontWeight: 600 }}>
+                ⚡ {totalAllTime} spark{totalAllTime !== 1 ? 's' : ''} all time
+              </span>
+            )}
+            {state.status === 'success' && firstKudoDate && (
+              <span style={{ background: 'var(--surface-2)', border: '1px solid var(--line)', borderRadius: 'var(--radius-sm)', padding: '4px 10px', fontSize: 12, color: 'var(--muted)' }}>
+                First spark {firstKudoDate}
+              </span>
+            )}
+            {state.status === 'success' && state.data.stats.streak > 0 && (
+              <span style={{ background: 'var(--teal-light)', border: '1px solid var(--teal-border)', borderRadius: 'var(--radius-sm)', padding: '4px 10px', fontSize: 12, color: 'var(--teal)', fontWeight: 600 }}>
+                🔥 {state.data.stats.streak}-day giving streak
+              </span>
+            )}
           </div>
         </div>
-        <button style={{ background: 'var(--coral)', color: '#fff', border: '1px solid var(--coral-dark)', padding: '9px 14px', borderRadius: 'var(--radius)', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-sans)', whiteSpace: 'nowrap' }}>
+        <button onClick={() => setShowModal(true)} style={{ background: 'var(--coral)', color: '#fff', border: '1px solid var(--coral-dark)', padding: '9px 14px', borderRadius: 'var(--radius)', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-sans)', whiteSpace: 'nowrap' }}>
           <i className="fa-solid fa-bolt" /> Send a Spark
         </button>
       </div>
@@ -135,7 +176,7 @@ export function MyKudosPage() {
           <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--ink)' }}>Your year in sparks</div>
         </div>
         <div style={{ padding: '18px 22px' }}>
-          <Heatmap />
+          <Heatmap data={state.status === 'success' ? heatmapData : undefined} />
         </div>
       </div>
 

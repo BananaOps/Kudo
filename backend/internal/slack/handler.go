@@ -184,7 +184,6 @@ func (h *Handler) HandleCommand(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "read error", http.StatusBadRequest)
 		return
 	}
-	// Re-wrap body for ParseForm.
 	r.Body = io.NopCloser(bytes.NewReader(body))
 
 	if err := h.verifySignature(r, body); err != nil {
@@ -198,14 +197,185 @@ func (h *Handler) HandleCommand(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	command := r.FormValue("command")
-	slog.Info("slash command received", "command", command)
+	command  := r.FormValue("command")
+	text     := strings.TrimSpace(r.FormValue("text"))
+	userID   := r.FormValue("user_id")
+	teamID   := r.FormValue("team_id")
+	channel  := r.FormValue("channel_name")
+
+	if teamID == "" {
+		teamID = h.wsID
+	}
+
+	slog.Info("slash command received", "command", command, "user", userID, "text", text)
 
 	w.Header().Set("Content-Type", "application/json")
+
+	switch command {
+	case "/kudo":
+		h.handleKudoCommand(w, teamID, userID, channel, text)
+	case "/leaderboard":
+		h.handleLeaderboardCommand(w, teamID, text)
+	default:
+		slackReply(w, "ephemeral", "Commande inconnue : "+command)
+	}
+}
+
+// handleKudoCommand implements /kudo @user [message].
+func (h *Handler) handleKudoCommand(w http.ResponseWriter, wsID, fromUserID, channel, text string) {
+	if text == "" {
+		slackReply(w, "ephemeral",
+			"*Usage :* `/kudo @collègue super boulot !`\nMentionnez un collègue suivi de votre message.")
+		return
+	}
+
+	// Load workspace emoji config.
+	emoji := "⚡"
+	ws, err := h.workspaces.GetByID(wsID)
+	if err == nil && ws.KudoEmoji != "" {
+		emoji = ws.KudoEmoji
+	}
+
+	// Slash-command text may not contain the currency emoji — add one
+	// so ParseKudo can find it, unless the user already included some.
+	patterns := emojiPatterns(emoji)
+	hasEmoji := false
+	for _, p := range patterns {
+		if strings.Contains(text, p) {
+			hasEmoji = true
+			break
+		}
+	}
+	parseText := text
+	if !hasEmoji {
+		parseText = emoji + " " + text
+	}
+
+	result, err := ParseKudo(fromUserID, parseText, ParseConfig{CurrencyEmoji: emoji})
+	if err != nil {
+		switch {
+		case errors.Is(err, ErrNoMention):
+			slackReply(w, "ephemeral", "Mentionnez un collègue avec `@nom` dans votre message.")
+		case errors.Is(err, ErrSelfMention):
+			slackReply(w, "ephemeral", "Vous ne pouvez pas vous envoyer un spark à vous-même 😅")
+		default:
+			slackReply(w, "ephemeral", "Impossible de traiter la commande : "+err.Error())
+		}
+		return
+	}
+
+	// Quota check.
+	dailyQuota := 5
+	if ws != nil && ws.DailyQuota > 0 {
+		dailyQuota = ws.DailyQuota
+	}
+	if err := kudos.CheckQuota(h.kudos, kudos.QuotaConfig{Daily: dailyQuota}, wsID, fromUserID, time.Now().UTC()); err != nil {
+		if errors.Is(err, kudos.ErrQuotaExceeded) {
+			slackReply(w, "ephemeral", "⛔ Quota journalier atteint — revenez demain !")
+			return
+		}
+		slackReply(w, "ephemeral", "Erreur interne. Réessayez.")
+		return
+	}
+
+	fromName := h.resolveUserName(fromUserID)
+	toName   := h.resolveUserName(result.RecipientID)
+
+	kudo := &kudos.Kudo{
+		WorkspaceID:  wsID,
+		FromUserID:   fromUserID,
+		FromUserName: fromName,
+		ToUserID:     result.RecipientID,
+		ToUserName:   toName,
+		Message:      result.Message,
+		Channel:      channel,
+		EmojiCount:   result.KudoCount,
+		CreatedAt:    time.Now().UTC(),
+	}
+
+	saved, err := h.kudos.Save(kudo)
+	if err != nil {
+		slog.Error("slash /kudo save failed", "err", err)
+		slackReply(w, "ephemeral", "Erreur lors de l'enregistrement. Réessayez.")
+		return
+	}
+
+	slog.Info("kudo saved via slash command", "id", saved.ID, "from", fromName, "to", toName)
+
+	sparks := strings.Repeat(emoji, result.KudoCount)
+	msg := fmt.Sprintf("%s *%s* → *<@%s>* %s\n_%s_",
+		sparks, fromName, result.RecipientID, sparks, result.Message)
+	slackReply(w, "in_channel", msg)
+}
+
+// handleLeaderboardCommand implements /leaderboard [week|month|all].
+func (h *Handler) handleLeaderboardCommand(w http.ResponseWriter, wsID, text string) {
+	period := strings.ToLower(strings.TrimSpace(text))
+	if period == "" {
+		period = "week"
+	}
+
+	var since *time.Time
+	now := time.Now().UTC()
+	label := ""
+	switch period {
+	case "week":
+		t := weekStartCmd(now)
+		since = &t
+		label = "cette semaine"
+	case "month":
+		t := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC)
+		since = &t
+		label = "ce mois"
+	case "all":
+		since = nil
+		label = "de tous les temps"
+	default:
+		slackReply(w, "ephemeral", "Usage : `/leaderboard [week|month|all]`")
+		return
+	}
+
+	entries, err := h.kudos.TopRecipients(wsID, 10, since)
+	if err != nil {
+		slackReply(w, "ephemeral", "Impossible de charger le leaderboard.")
+		return
+	}
+
+	if len(entries) == 0 {
+		slackReply(w, "ephemeral", "Aucun kudo enregistré "+label+".")
+		return
+	}
+
+	medals := []string{"🥇", "🥈", "🥉"}
+	var sb strings.Builder
+	sb.WriteString(fmt.Sprintf("*⚡ Top sparks reçus — %s*\n", label))
+	for i, e := range entries {
+		medal := ""
+		if i < len(medals) {
+			medal = medals[i] + " "
+		} else {
+			medal = fmt.Sprintf("%2d. ", e.Rank)
+		}
+		sb.WriteString(fmt.Sprintf("%s*%s* — %d ⚡\n", medal, e.UserName, e.Total))
+	}
+
+	slackReply(w, "ephemeral", sb.String())
+}
+
+// slackReply writes a simple Slack slash-command response.
+func slackReply(w http.ResponseWriter, responseType, text string) {
 	_ = json.NewEncoder(w).Encode(map[string]string{
-		"response_type": "ephemeral",
-		"text":          "⚡ Kudo est actif ! Mentionnez un collègue avec ⚡ pour lui envoyer un spark.",
+		"response_type": responseType,
+		"text":          text,
 	})
+}
+
+func weekStartCmd(t time.Time) time.Time {
+	weekday := int(t.Weekday())
+	if weekday == 0 {
+		weekday = 7
+	}
+	return time.Date(t.Year(), t.Month(), t.Day()-weekday+1, 0, 0, 0, 0, time.UTC)
 }
 
 // ── Slack signature verification ─────────────────────────────────────────────

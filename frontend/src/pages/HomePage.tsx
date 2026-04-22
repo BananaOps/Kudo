@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Avatar } from '../components/Avatar';
 import { StatCard } from '../components/StatCard';
 import { KudoItem } from '../components/KudoItem';
@@ -13,6 +14,7 @@ export function HomePage() {
   const [tab, setTab] = useState<'received' | 'given'>('received');
   const { userId, userName } = useUser();
   const { status, data, error } = useHome(userId);
+  const navigate = useNavigate();
 
   const stats = data?.stats;
   const recentKudos = data?.recentKudos ?? [];
@@ -66,7 +68,10 @@ export function HomePage() {
             <button onClick={() => setShowModal(true)} style={{ background: 'var(--coral)', color: '#fff', border: '1px solid var(--coral-dark)', padding: '9px 14px', borderRadius: 'var(--radius)', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-sans)' }}>
               <i className="fa-solid fa-bolt" /> Send a Spark
             </button>
-            <button style={{ background: 'var(--surface)', border: '1px solid var(--line)', padding: '9px 14px', borderRadius: 'var(--radius)', fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font-sans)', color: 'var(--ink)' }}>
+            <button
+              onClick={() => navigate('/leaderboard?tab=given&period=week')}
+              style={{ background: 'var(--surface)', border: '1px solid var(--line)', padding: '9px 14px', borderRadius: 'var(--radius)', fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font-sans)', color: 'var(--ink)' }}
+            >
               See this week's top givers
             </button>
           </div>
@@ -140,7 +145,10 @@ export function HomePage() {
             ))}
           </div>
           <div style={{ padding: 16, textAlign: 'center' }}>
-            <button style={{ background: 'var(--surface)', border: '1px solid var(--line)', padding: '9px 14px', borderRadius: 10, fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font-sans)', color: 'var(--ink)' }}>
+            <button
+              onClick={() => navigate('/kudos')}
+              style={{ background: 'var(--surface)', border: '1px solid var(--line)', padding: '9px 14px', borderRadius: 10, fontSize: 13, cursor: 'pointer', fontFamily: 'var(--font-sans)', color: 'var(--ink)' }}
+            >
               View all my sparks →
             </button>
           </div>
@@ -172,17 +180,22 @@ export function HomePage() {
               {channelStats.length === 0 && (
                 <div style={{ padding: '8px 0', color: 'var(--muted)', fontSize: 13 }}>No channel data yet.</div>
               )}
-              {channelStats.map(ch => (
-                <div key={ch.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px dashed var(--line)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 60, height: 4, background: 'var(--surface-2)', borderRadius: 2, overflow: 'hidden' }}>
-                      <div style={{ height: '100%', width: `${(ch.count / maxChannelCount) * 100}%`, background: 'var(--coral)', borderRadius: 2 }} />
+              {channelStats.map(ch => {
+                const isWeb = ch.name === 'web';
+                const label = isWeb ? 'Web' : ch.name;
+                const icon = isWeb ? 'fa-solid fa-globe' : 'fa-solid fa-hashtag';
+                return (
+                  <div key={ch.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px dashed var(--line)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ width: 60, height: 4, background: 'var(--surface-2)', borderRadius: 2, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${(ch.count / maxChannelCount) * 100}%`, background: 'var(--coral)', borderRadius: 2 }} />
+                      </div>
+                      <span style={{ color: 'var(--muted)', fontSize: 13 }}><i className={icon} style={{ fontSize: 10 }} /> {label}</span>
                     </div>
-                    <span style={{ color: 'var(--muted)', fontSize: 13 }}><i className="fa-solid fa-hashtag" style={{ fontSize: 10 }} /> {ch.name}</span>
+                    <span style={{ color: 'var(--muted)', fontSize: 13 }}>{ch.count}</span>
                   </div>
-                  <span style={{ color: 'var(--muted)', fontSize: 13 }}>{ch.count}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

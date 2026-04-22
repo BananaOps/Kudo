@@ -180,8 +180,8 @@ Go to **https://api.slack.com/apps** → **Create New App** → **From an app ma
 ```yaml
 display_information:
   name: Kudo
-  description: Give kudos to your teammates with a simple emoji mention 🌮
-  background_color: "#1a1a2e"
+  description: Recognize teammates by dropping ⚡ Spark in any message
+  background_color: "#FF7B6B"
 
 features:
   bot_user:

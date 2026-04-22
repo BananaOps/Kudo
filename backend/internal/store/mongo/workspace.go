@@ -14,17 +14,24 @@ import (
 )
 
 type workspaceDoc struct {
-	ID               string `bson:"_id"`
-	Name             string `bson:"name"`
-	BotToken         string `bson:"bot_token"`
-	DailyQuota       int    `bson:"daily_quota"`
-	KudoEmoji        string `bson:"kudo_emoji"`
-	CurrencySingular string `bson:"currency_singular"`
-	CurrencyPlural   string `bson:"currency_plural"`
-	InstalledAt      string `bson:"installed_at"`
+	ID               string                `bson:"_id"`
+	Name             string                `bson:"name"`
+	BotToken         string                `bson:"bot_token"`
+	DailyQuota       int                   `bson:"daily_quota"`
+	KudoEmoji        string                `bson:"kudo_emoji"`
+	CurrencySingular string                `bson:"currency_singular"`
+	CurrencyPlural   string                `bson:"currency_plural"`
+	ColorCoral       string                `bson:"color_coral"`
+	ColorTeal        string                `bson:"color_teal"`
+	AdminUsers       []workspace.AdminUser `bson:"admin_users"`
+	InstalledAt      string                `bson:"installed_at"`
 }
 
 func docToWorkspace(d workspaceDoc) *workspace.Workspace {
+	admins := d.AdminUsers
+	if admins == nil {
+		admins = []workspace.AdminUser{}
+	}
 	return &workspace.Workspace{
 		ID:               d.ID,
 		Name:             d.Name,
@@ -33,6 +40,9 @@ func docToWorkspace(d workspaceDoc) *workspace.Workspace {
 		KudoEmoji:        d.KudoEmoji,
 		CurrencySingular: d.CurrencySingular,
 		CurrencyPlural:   d.CurrencyPlural,
+		ColorCoral:       d.ColorCoral,
+		ColorTeal:        d.ColorTeal,
+		AdminUsers:       admins,
 		InstalledAt:      d.InstalledAt,
 	}
 }
@@ -68,6 +78,9 @@ func (r *WorkspaceRepository) Upsert(ws *workspace.Workspace) error {
 		KudoEmoji:        ws.KudoEmoji,
 		CurrencySingular: ws.CurrencySingular,
 		CurrencyPlural:   ws.CurrencyPlural,
+		ColorCoral:       ws.ColorCoral,
+		ColorTeal:        ws.ColorTeal,
+		AdminUsers:       ws.AdminUsers,
 		InstalledAt:      ws.InstalledAt,
 	}
 
