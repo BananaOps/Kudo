@@ -149,7 +149,7 @@ export function MyKudosPage() {
                 First spark {firstKudoDate}
               </span>
             )}
-            {state.status === 'success' && state.data.stats.streak > 0 && (
+            {state.status === 'success' && (state.data.stats.streak ?? 0) > 0 && (
               <span style={{ background: 'var(--teal-light)', border: '1px solid var(--teal-border)', borderRadius: 'var(--radius-sm)', padding: '4px 10px', fontSize: 12, color: 'var(--teal)', fontWeight: 600 }}>
                 🔥 {state.data.stats.streak}-day giving streak
               </span>

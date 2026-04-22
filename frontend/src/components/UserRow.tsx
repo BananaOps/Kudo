@@ -1,7 +1,6 @@
 import { LeaderboardEntry } from '../types/kudos';
 import { Avatar } from './Avatar';
 
-const AVATAR_COLORS = ['#E48A2C','#3E8E5A','#4A6CF7','#C24A38','#7C3AED','#0EA5A0','#D946EF','#64748B'];
 
 interface UserRowProps {
   entry: LeaderboardEntry;
