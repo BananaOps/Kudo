@@ -2,7 +2,7 @@ module github.com/BananaOps/kudo/backend
 
 go 1.26.2
 
-require go.mongodb.org/mongo-driver/v2 v2.5.1
+require go.mongodb.org/mongo-driver/v2 v2.6.0
 
 require (
 	github.com/klauspost/compress v1.17.6 // indirect
